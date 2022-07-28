@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <title>Загрузка файлов на сервер</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h1>Загрузка файлов на сервер</h1>
+            <p class="lead">Загрузка файлов на сервер через <a target="_blank" href="https://developer.mozilla.org/ru/docs/Web/API/Fetch_API/Using_Fetch#%D0%B7%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B0_%D1%84%D0%B0%D0%B9%D0%BB%D0%B0_%D0%BD%D0%B0_%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80">Fetch</a> и <a target="_blank" href="https://developer.mozilla.org/ru/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest#%D0%BE%D1%82%D0%BF%D1%80%D0%B0%D0%B2%D0%BA%D0%B0_%D1%84%D0%BE%D1%80%D0%BC_%D0%B8_%D0%B7%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B0_%D1%84%D0%B0%D0%B9%D0%BB%D0%BE%D0%B2">XMLHttpRequest</a>
+            </p>
+
+            <ul>
+                <li>Откройте cmd и перейдите к папке cd node-load-files</li>
+                <li>Установите компоненты npm i -s express express-fileupload</li>
+                <li>Создайте app.js с кодом:
+                    <pre><code>const express = require('express');
+const fileUpload = require('express-fileupload');
+
+const app = express();
+
+app.use(fileUpload({}));
+
+app.use(express.static('public'));
+
+app.get('/', function (req, res) {
+  return res.sendFile('./public/index.html',options)
+})
+
+app.post('/upload', function(req, res) {
+  req.files.myfile.mv('public/file/'+req.files.myfile.name);
+  res.setHeader('content-type', 'text/html;charset=utf-8');
+  res.end(req.files.myfile.name);
+  console.log(req.files.myfile); // the uploaded file object
+});
+
+const server = app.listen(3000, function () {
+
+  var host = server.address().address
+  var port = server.address().port
+
+  console.log("Server listening " + port)
+
+})</code></pre>
+
+                </li>
+                <li>Создайте папку public с файлом index.html 
+
+                    <pre><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous"&gt;
+    &lt;title&gt;Загрузка файлов на сервер&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="row"&gt;
+            &lt;h1&gt;Загрузка файлов на сервер&lt;/h1&gt;
+            &lt;form action="/upload" method="POST" enctype="multipart/form-data"&gt;
+                &lt;div class="mb-3"&gt;
+                    &lt;input type="file" class="form-control" name="myfile"&gt;
+                &lt;/div&gt;
+                &lt;div class="mb-3"&gt;
+                    &lt;input type="submit" class="btn btn-primary" /&gt;
+                &lt;/div&gt;
+            &lt;/form&gt;
+        &lt;/div&gt;
+        &lt;hr /&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="mb-3"&gt;
+                &lt;input type="button" class="btn btn-primary" value="Отправить с XMLHttpRequest" onclick="fn1()"/&gt;
+            &lt;/div&gt;
+            &lt;div class="mb-3"&gt;
+                &lt;input type="button" class="btn btn-primary" value="Отправить с Fetch" onclick="fn2()"/&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+      
+        &lt;script&gt;
+            function fn1(){
+
+            }
+            function fn2(){
+                
+            }
+        &lt;/script&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                </li>
+                <li>Создайте в public папку file</li>
+                <li>Протестируйте загрузку файла: выберите файл для отправки, прикрепите к форме и отправьте используя кнопку формы</li>
+                <li>Реализуйте загрузку файла чеерз асинхронные запросы (напишите код в функция fn1() и fn2()) </li>
+            </ul>
+        </div>
+
+        <hr />
+
+      
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
