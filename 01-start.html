@@ -107,10 +107,16 @@
 
                 <script>
                     function fn3() {
-                        fetch('https://freegeoip.app/json/')
+                        fetch('https://freegeoip.live/json/')
                             .then(response => {
-                                response.json().then(json => {
-                                    result3.innerHTML = JSON.stringify(json, null, ' ');
+                                response.json().then(data => {
+                                    result3.innerHTML = JSON.stringify(data, null, ' ');
+                                    result3.innerHTML = `
+                                    Страна: ${data.country_name}
+                                    Страны код: ${data.country_code}
+                                    Широта: ${data.latitude}
+                                    Долгота: ${data.longitude}
+                                    `
                                 });
                             })
                     }
@@ -127,8 +133,16 @@
                     function fn4() {
                         fetch('https://jsonplaceholder.typicode.com/users/1')
                             .then(response => {
-                                response.json().then(json => {
-                                    result4.innerHTML = JSON.stringify(json, null, ' ');
+                                response.json().then(data => {
+                                    result4.innerHTML = '';
+                                    data.forEach(item => {
+                                        result4.innerHTML += `<tr>
+                                          <td> ${item.name}
+                                            <td> ${item.adress.city}
+                                                <td> ${item.website}
+                                                    <td><a href='#' class="btn btn-danger">У</a>
+                                                        </tr>`
+                                    })
                                 });
                             })
                     }
