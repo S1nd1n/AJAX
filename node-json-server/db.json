@@ -3,10 +3,23 @@
     {
       "author": "Автор1",
       "title": "Название1",
-      "id": 2
+      "id": 1,
+      "price": 1000
+    },
+    {
+      "author": "Автор2",
+      "title": "Название2",
+      "id": 2,
+      "price": 2000
     }
   ],
-  "comments": [],
+  "comments": [
+    {
+      "id": 1,
+      "text": "Очень интересная книга!",
+      "postId": 1
+    }
+  ],
   "profile": {
     "name": "typicode"
   }

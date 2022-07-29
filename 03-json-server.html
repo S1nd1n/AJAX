@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <title>Работа JSON Server</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h1>Работа JSON-Server</h1>
+            <p class="lead">Проект
+                <a target="_blank" href="https://www.npmjs.com/package/json-server">JSON Server</a> представляет собой
+                фейковый/тестовый REST API.
+            </p>
+
+
+            <ol>
+                <li>Создайте или откройте папку node-json-server</li>
+                <li>Запустите Win, откройте cmd, через cd перейдите к этой папке</li>
+                <li>инициализируйте npm init -y</li>
+                <li>установите сервер npm install -s json-server</li>
+                <li>создайте json-файл db.json с данными:
+                    <pre>{
+    "posts": [
+        { "id": 1, "title": "json-server", "author": "typicode" }
+    ],
+    "comments": [
+        { "id": 1, "body": "some comment", "postId": 1 }
+    ],
+    "profile": { "name": "typicode" }
+    }</pre>
+                </li>
+                <li>Запустите сервер: json-server --watch db.json</li>
+                <li>Убедитесь что сервер запустился - откройте в браузере <a target="_blank"
+                        href="http://localhost:3000/">страницу</a></li>
+            </ol>
+        </div>
+
+        <hr />
+
+        <section>
+            <h3>XMLHTTPRequest</h3>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrGETPosts(); return false">GET /posts</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrGETPosts(1); return false">GET
+                        /posts/1</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrGETComments(); return false">GET
+                        /comments</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrGETComments(1); return false">GET
+                        /comments/1</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrGETProfile(); return false">GET
+                        /profile</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrPOSTPosts(); return false">POST
+                        /posts</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrPATCHPosts(1); return false">PATCH
+                        /posts/1</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrDELETEPosts(1); return false">DELETE
+                        /posts/1</a>
+                    <a href="#" class="btn btn-danger m-2 btn-sm" onclick="clearResult(1);  return false">Очистить
+                        результаты</a>
+                </div>
+                <div class="col-md-6">
+                    <h4>Результат</h4>
+                    <pre id="result1"></pre>
+                </div>
+            </div>
+
+
+            <script>
+                const url = 'http://localhost:3000/';
+                const xhrGETPosts = (id = null) => {
+                    let xhr = new XMLHttpRequest();
+
+                    xhr.open('GET', url + 'posts/' + id, true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.send(null);
+
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === 4) {
+                            if ([200, 201].includes(xhr.status)) {
+                                result1.innerHTML = JSON.stringify(
+                                    JSON.parse(xhr.responseText),
+                                    null,
+                                    ' '
+                                );
+                            }
+                        }
+                    }
+                };
+
+            </script>
+            <hr>
+        </section>
+
+
+        <section>
+            <h3>Fetch API</h3>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchGETPosts(); return false">GET
+                        /posts</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchGETPosts(1); return false">GET
+                        /posts/1</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchGETComments(); return false">GET
+                        /comments</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchGETComments(1); return false">GET
+                        /comments/1</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchGETProfile(); return false">GET
+                        /profile</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchPOSTPosts(); return false">POST
+                        /posts</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchPATCHPosts(1); return false">PATCH
+                        /posts/1</a>
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchDELETEPosts(1); return false">DELETE
+                        /posts/1</a>
+                    <a href="#" class="btn btn-danger m-2 btn-sm" onclick="clearResult(2); return false">Очистить
+                        результаты</a>
+                </div>
+                <div class="col-md-6">
+                    <h4>Результат</h4>
+                    <pre id="result2"></pre>
+                </div>
+            </div>
+
+            <script>
+                function postsFetch(id) {
+                    console.log(`http://localhost:3000/posts/${id ? id : ''}`);
+
+                    fetch(`http://localhost:3000/posts/${id ? id : ''}`)
+                        .then(response => {
+                            response.json().then(json => {
+                                result2.innerHTML = JSON.stringify(json, null, ' ');
+                            });
+                        }).catch(txt => {
+                            console.log('Ошибка: ', txt)
+                        });
+                }
+
+                function commentsFetch(id) {
+                    console.log(`http://localhost:3000/comments/${id ? id : ''}`);
+
+                    fetch(`http://localhost:3000/comments/${id ? id : ''}`)
+                        .then(response => {
+                            response.json().then(json => {
+                                result2.innerHTML = JSON.stringify(json, null, ' ');
+                            });
+                        }).catch(txt => {
+                            console.log('Ошибка: ', txt)
+                        });
+                }
+
+                function profileFetch(id) {
+                    console.log(`http://localhost:3000/profile/`);
+
+                    fetch(`http://localhost:3000/profile/`)
+                        .then(response => {
+                            response.json().then(json => {
+                                result2.innerHTML = JSON.stringify(json, null, ' ');
+                            });
+                        }).catch(txt => {
+                            console.log('Ошибка: ', txt)
+                        });
+                }
+
+                async function createPostsFetch({
+                    author,
+                    title
+                }) {
+
+                    const url = 'http://localhost:3000/posts';
+                    console.log(url)
+
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                author,
+                                title
+                            }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        const json = await response.json();
+                        result2.innerHTML = JSON.stringify(json);
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                    }
+                }
+
+                function updatePostsFetch({
+                    id,
+                    author,
+                    title
+                }) {
+                    const url = 'http://localhost:3000/posts/' + id;
+                    fetch(url, {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            author,
+                            title
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(res => res.json())
+                        .then(json => result2.innerHTML = JSON.stringify(json));
+                }
+
+                function deletePostsFetch(id) {
+                    let xhr = new XMLHttpRequest();
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(JSON.parse(xhr.responseText));
+                            result1.innerHTML = xhr.responseText;
+                        }
+                    }
+                    console.log(`http://localhost:3000/posts/`)
+                    xhr.open('DELETE', `http://localhost:3000/posts/${id}`, true);
+                    xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+                    xhr.send(null);
+                }
+            </script>
+        </section>
+    </div>
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
