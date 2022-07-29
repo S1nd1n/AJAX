@@ -58,11 +58,13 @@
                         /comments/1</a>
                     <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrGETProfile(); return false">GET
                         /profile</a>
-                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrPOSTPosts(); return false">POST
+                    <a href="#" class="btn btn-primary m-2 btn-sm"
+                        onclick="xhrPOSTPosts({title: 'Название 3', author: 'Автор 3', price: 3000 }); return false">POST
                         /posts</a>
-                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrPATCHPosts(1); return false">PATCH
+                    <a href="#" class="btn btn-primary m-2 btn-sm"
+                        onclick="xhrPATCHPosts({id: 2, title: 'Название 22', author: 'Автор 22', price: 2000 }); return false">PATCH
                         /posts/1</a>
-                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrDELETEPosts(1); return false">DELETE
+                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="xhrDELETEPosts(3); return false">DELETE
                         /posts/1</a>
                     <a href="#" class="btn btn-danger m-2 btn-sm" onclick="clearResult(1);  return false">Очистить
                         результаты</a>
@@ -76,10 +78,110 @@
 
             <script>
                 const url = 'http://localhost:3000/';
-                const xhrGETPosts = (id = null) => {
+                const xhrGETPosts = (id = '') => {
                     let xhr = new XMLHttpRequest();
 
                     xhr.open('GET', url + 'posts/' + id, true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.send(null);
+
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === 4) {
+                            if ([200, 201].includes(xhr.status)) {
+                                result1.innerHTML = JSON.stringify(
+                                    JSON.parse(xhr.responseText),
+                                    null,
+                                    ' '
+                                );
+                            }
+                        }
+                    }
+                };
+                const xhrGETComments = () => {
+                    let xhr = new XMLHttpRequest();
+
+                    xhr.open('GET', url + 'comments/', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.send(null);
+
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === 4) {
+                            if ([200, 201].includes(xhr.status)) {
+                                result1.innerHTML = JSON.stringify(
+                                    JSON.parse(xhr.responseText),
+                                    null,
+                                    ' '
+                                );
+                            }
+                        }
+                    }
+                };
+                const xhrGETProfile = (id = '') => {
+                    let xhr = new XMLHttpRequest();
+
+                    xhr.open('GET', url + 'profile/' + id, true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.send(null);
+
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === 4) {
+                            if ([200, 201].includes(xhr.status)) {
+                                result1.innerHTML = JSON.stringify(
+                                    JSON.parse(xhr.responseText),
+                                    null,
+                                    ' '
+                                );
+                            }
+                        }
+                    }
+                };
+                const xhrPOSTPosts = (post) => {
+                    let xhr = new XMLHttpRequest();
+
+                    xhr.open('POST', url + 'posts/', true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.send(JSON.stringify(post));
+
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === 4) {
+                            if ([200, 201].includes(xhr.status)) {
+                                result1.innerHTML = JSON.stringify(
+                                    JSON.parse(xhr.responseText),
+                                    null,
+                                    ' '
+                                );
+                            }
+                        }
+                    }
+                };
+                const xhrPATCHPosts = ({ id, title, author, price }) => {
+                    let xhr = new XMLHttpRequest();
+
+                    xhr.open('PATCH', url + 'posts/' + id, true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.send(JSON.stringify({ title, author, price }));
+
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === 4) {
+                            if ([200, 201].includes(xhr.status)) {
+                                result1.innerHTML = JSON.stringify(
+                                    JSON.parse(xhr.responseText),
+                                    null,
+                                    ' '
+                                );
+                            }
+                        }
+                    }
+                };
+                const xhrDELETEPosts = (id) => {
+                    let xhr = new XMLHttpRequest();
+
+                    xhr.open('DELETE', url + 'posts/' + id, true);
                     xhr.setRequestHeader('Content-Type', 'application/json');
 
                     xhr.send(null);
@@ -117,9 +219,11 @@
                         /comments/1</a>
                     <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchGETProfile(); return false">GET
                         /profile</a>
-                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchPOSTPosts(); return false">POST
+                    <a href="#" class="btn btn-primary m-2 btn-sm"
+                        onclick="fetchPOSTPosts({title: 'Название 3', author: 'Автор 3', price: 3000 }); return false">POST
                         /posts</a>
-                    <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchPATCHPosts(1); return false">PATCH
+                    <a href="#" class="btn btn-primary m-2 btn-sm"
+                        onclick="fetchPATCHPosts({id: 2, title: 'Название 22', author: 'Автор 22', price: 2000 }); return false">PATCH
                         /posts/1</a>
                     <a href="#" class="btn btn-primary m-2 btn-sm" onclick="fetchDELETEPosts(1); return false">DELETE
                         /posts/1</a>
@@ -133,110 +237,150 @@
             </div>
 
             <script>
-                function postsFetch(id) {
-                    console.log(`http://localhost:3000/posts/${id ? id : ''}`);
+                const fetchGETPosts = (id = '') => {
 
-                    fetch(`http://localhost:3000/posts/${id ? id : ''}`)
-                        .then(response => {
-                            response.json().then(json => {
-                                result2.innerHTML = JSON.stringify(json, null, ' ');
-                            });
-                        }).catch(txt => {
-                            console.log('Ошибка: ', txt)
-                        });
-                }
+                    fetch(url + 'posts/' + id)
+                        .then(body => body.json())
+                        .then(body => {
+                            result2.innerHTML = JSON.stringify(body,
+                                null,
+                                ' '
+                            );
+                        })
+                };
+                const fetchGETComments = (id = '') => {
 
-                function commentsFetch(id) {
-                    console.log(`http://localhost:3000/comments/${id ? id : ''}`);
+                    fetch(url + 'comments/' + id)
+                        .then(body => body.json())
+                        .then(body => {
+                            result2.innerHTML = JSON.stringify(body,
+                                null,
+                                ' '
+                            );
+                        })
+                };
+                const fetchGETProfile = (id = '') => {
 
-                    fetch(`http://localhost:3000/comments/${id ? id : ''}`)
-                        .then(response => {
-                            response.json().then(json => {
-                                result2.innerHTML = JSON.stringify(json, null, ' ');
-                            });
-                        }).catch(txt => {
-                            console.log('Ошибка: ', txt)
-                        });
-                }
+                    fetch(url + 'profile/' + id)
+                        .then(body => body.json())
+                        .then(body => {
+                            result2.innerHTML = JSON.stringify(body,
+                                null,
+                                ' '
+                            );
+                        })
+                };
+                const fetchPOSTPosts = (post) => {
 
-                function profileFetch(id) {
-                    console.log(`http://localhost:3000/profile/`);
-
-                    fetch(`http://localhost:3000/profile/`)
-                        .then(response => {
-                            response.json().then(json => {
-                                result2.innerHTML = JSON.stringify(json, null, ' ');
-                            });
-                        }).catch(txt => {
-                            console.log('Ошибка: ', txt)
-                        });
-                }
-
-                async function createPostsFetch({
-                    author,
-                    title
-                }) {
-
-                    const url = 'http://localhost:3000/posts';
-                    console.log(url)
-
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                author,
-                                title
-                            }),
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        const json = await response.json();
-                        result2.innerHTML = JSON.stringify(json);
-                    } catch (error) {
-                        console.error('Ошибка:', error);
-                    }
-                }
-
-                function updatePostsFetch({
-                    id,
-                    author,
-                    title
-                }) {
-                    const url = 'http://localhost:3000/posts/' + id;
-                    fetch(url, {
-                        method: 'PATCH',
-                        body: JSON.stringify({
-                            author,
-                            title
-                        }),
+                    fetch(url + 'posts/', {
+                        method: "POST",
+                        body: JSON.stringify(post),
+                        // mode: 'no-cors',
                         headers: {
-                            'Content-Type': 'application/json'
+                            "Content-Type": 'application/json',
+                            "Accept": 'application/json',
                         }
-                    }).then(res => res.json())
-                        .then(json => result2.innerHTML = JSON.stringify(json));
-                }
+                    })
+                        .then(body => body.json())
+                        .then(body => {
+                            result2.innerHTML = JSON.stringify(body,
+                                null,
+                                ' '
+                            );
+                        })
+                };
+                const fetchPATCHPosts = ({ id, title, author, price }) => {
 
-                function deletePostsFetch(id) {
-                    let xhr = new XMLHttpRequest();
-
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState == 4 && xhr.status == 200) {
-                            console.log(JSON.parse(xhr.responseText));
-                            result1.innerHTML = xhr.responseText;
+                    fetch(url + 'posts/' + id, {
+                        method: "PATCH",
+                        body: JSON.stringify({ title, author, price }),
+                        // mode: 'no-cors',
+                        headers: {
+                            "Content-Type": 'application/json',
+                            "Accept": 'application/json',
                         }
-                    }
-                    console.log(`http://localhost:3000/posts/`)
-                    xhr.open('DELETE', `http://localhost:3000/posts/${id}`, true);
-                    xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-                    xhr.send(null);
-                }
+                    })
+                        .then(body => body.json())
+                        .then(body => {
+                            result2.innerHTML = JSON.stringify(body,
+                                null,
+                                ' '
+                            );
+                        })
+                };
+                const fetchDELETEPosts = (id) => {
+
+                    fetch(url + 'posts/' + id, {
+                        method: "DELETE",
+                        // mode: 'no-cors',
+                        headers: {
+                            "Content-Type": 'application/json',
+                            "Accept": 'application/json',
+                        }
+                    })
+                        .then(body => body.json())
+                        .then(body => {
+                            result2.innerHTML = JSON.stringify(body,
+                                null,
+                                ' '
+                            );
+                        })
+                };
             </script>
         </section>
     </div>
     </div>
 
-
+    <section>
+        <div class="container">
+            <div class="row">
+                <h4>Поиск поста по номеру</h4>
+                <form>
+                    <div class="row"><input type="text" placeholder="Введите название книги"></div>
+                    <div class="row"><input type="button" onclick="searchBookById()" value="ok"></div>
+                </form>
+                <div class="post" id="post"></div>
+                <script>
+                    /*Организовать поиск книги по ее идентификатору из поля ввода*/
+                </script>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container">
+            <div class="row">
+                <h4>Добавление книги</h4>
+                <form>
+                    <div class="row"><input type="text" placeholder="Автор книги"></div>
+                    <div class="row"><input type="text" placeholder="Название книги"></div>
+                    <div class="row"><input type="text" placeholder="Цена книги"></div>
+                    <div class="row"><input type="button" onclick="addBook()" value="ok"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container">
+            <div class="row">
+                <h4>Все книги базы</h4>
+                <table class="post" id="posts">
+                    <tr>
+                        <th>Название</th>
+                        <th>Автор</th>
+                        <th>Цена</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td>Название 1</td>
+                        <td>Автор 1</td>
+                        <td>1000</td>
+                        <td>
+                            <a href="#" class="btn btn-primary">Удалить</a>
+                        </td>
+                    </tr>
+            </div>
+        </div>
+    </section>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
@@ -244,5 +388,6 @@
         crossorigin="anonymous"></script>
 
 </body>
-
+<!-- json-server --watch db.json -->
+<!-- запуск сервера -->
 </html>
