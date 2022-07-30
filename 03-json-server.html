@@ -326,6 +326,12 @@
                             );
                         })
                 };
+                async function getPosts() {
+                    const result = await fetch(url + 'posts/')
+                        .then(body => body.json());
+                    return result;
+                };
+                // getPosts();
             </script>
         </section>
     </div>
@@ -336,12 +342,53 @@
             <div class="row">
                 <h4>Поиск поста по номеру</h4>
                 <form>
-                    <div class="row"><input type="text" placeholder="Введите название книги"></div>
-                    <div class="row"><input type="button" onclick="searchBookById()" value="ok"></div>
+                    <div class="row"><input type="text" placeholder="Введите номер книги" class="form-control"
+                            id="idBook"></div>
+                    <div class="row"><input type="button" onclick="searchBookById(idBook.value)" value="ok"
+                            class="btn btn-primary" value="ok"></div>
                 </form>
-                <div class="post" id="post"></div>
+                <div class="post" id="result3"></div>
                 <script>
                     /*Организовать поиск книги по ее идентификатору из поля ввода*/
+                    async function searchBookById(id) {
+                        if (!id) return;
+
+                        let book = await fetch(url + 'posts/' + id)
+                            .then(body => body.json());
+
+                        post.innerHTML = `${book.id} ${book.title} ${book.author} ${book.price}`
+                    }
+                </script>
+            </div>
+        </div>
+    </section>
+    <hr>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <h4>Поиск поста по названию (полнотекстовый)</h4>
+                <form>
+                    <div class="row"><input type="text" placeholder="Введите название книги" class="form-control"
+                            id="titleBook" onkeyup="searchBookByTitle(titleBook.value)">
+                    </div>
+                </form>
+                <div class="post" id="result3"></div>
+                <script>
+                    /*Организовать поиск книги по ее идентификатору из поля ввода*/
+                    async function searchBookByTitle(title) {
+                        
+                        if (!title) return;
+
+                        result3.innerHTML = '';
+
+                        let books = await fetch(url + 'posts/?q=' + title)
+                            .then(body => body.json());
+
+                        books.forEach(book => {
+                            result3.innerHTML += `${book.id} ${book.title} ${book.author} ${book.price}<hr/>`
+                        })
+                    }
                 </script>
             </div>
         </div>
@@ -351,13 +398,19 @@
             <div class="row">
                 <h4>Добавление книги</h4>
                 <form>
-                    <div class="row"><input type="text" placeholder="Автор книги"></div>
-                    <div class="row"><input type="text" placeholder="Название книги"></div>
-                    <div class="row"><input type="text" placeholder="Цена книги"></div>
-                    <div class="row"><input type="button" onclick="addBook()" value="ok"></div>
+                    <div class="row"><input type="text" placeholder="Автор книги" id="author"></div>
+                    <div class="row"><input type="text" placeholder="Название книги" id="bookTitle"></div>
+                    <div class="row"><input type="text" placeholder="Цена книги" id="price"></div>
+                    <div class="row"><input type="button" onclick="addBook(author.value, bookTitle.value, price.value)"
+                            value="ok"></div>
                 </form>
             </div>
         </div>
+        <script>
+            function addBook(author, title, price) {
+                fetchPOSTPosts({ author, title, price })
+            }
+        </script>
     </section>
     <section>
         <div class="container">
@@ -381,7 +434,45 @@
             </div>
         </div>
     </section>
+    <script>
+        async function showPosts(selector, posts = getPosts()) {
+            const table = document.querySelector(selector);
+            const tr = table.getElementsByTagName('tr');
+            for (let i = tr.length - 1; i > 0; i--) {
+                tr[i].remove();
+            }
+            posts = await getPosts();
+            posts.forEach(item => {
+                const tr = document.createElement('tr');
 
+                let td1 = document.createElement('td');
+                td1.innerHTML = item.title;
+                tr.appendChild(td1);
+
+                let td2 = document.createElement('td');
+                td2.innerHTML = item.author;
+                tr.appendChild(td2);
+
+                let td3 = document.createElement('td');
+                td3.innerHTML = item.price;
+                tr.appendChild(td3);
+
+                let td4 = document.createElement('td');
+                btnDelete = document.createElement('button');
+                btnDelete.className = "btn btn-primary";
+                btnDelete.innerHTML = "Удалить";
+                btnDelete.setAttribute('data-id', item.id);
+                btnDelete.addEventListener('click', (ev) => {
+                    fetchDELETEPosts(ev.target.getAttribute('data-id'))
+                })
+                td4.appendChild(btnDelete);
+                tr.appendChild(td4);
+
+                table.appendChild(tr);
+            })
+        }
+        showPosts('#posts');
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
@@ -390,4 +481,5 @@
 </body>
 <!-- json-server --watch db.json -->
 <!-- запуск сервера -->
+
 </html>
